@@ -1,14 +1,21 @@
 # hackthecrisis2020-swe
+
 Project title: Workforce Reallocation
+
 Authors: Harsha Cheemakurthy, Anna Robbins
 
 ############################################################
+
 Short description:
+
 ############################################################
+
 Simulation of unemployment rates and reallocation into the workforce
 
 ############################################################
+
 Long description:
+
 ############################################################
 
 ### Introduction:
