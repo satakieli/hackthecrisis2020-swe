@@ -1,5 +1,7 @@
 # Import declarations go here
+import pandas
 import random
+import xlrd
 
 # Title: realloc.py
 # Authors: Harsha Cheemakurthy, Anna Robbins
@@ -7,8 +9,15 @@ import random
 
 # test variable declaration; will be changed later to follow a statistical model
 
+wb1 = xlrd.open_workbook("C:/users/arobb/PycharmProjects/untitled/Sample_unemployment_Stockholm_30.xlsx")
+sheet1 = wb1.sheet_by_index(0)
+
+wb2 = xlrd.open_workbook("C:/users/arobb/PycharmProjects/untitled/Sample_job_openings_Stockholm.xlsx")
+sheet2 = wb2.sheet_by_index(0)
+
+
 unemployed = random.randrange(300000,
-                              1000000)  # This is a random number between 300k-1mill representing people who are currently unemployed.
+                              1000000)  # This is a number representing people who are currently unemployed.
 employed: int = 0  # This is the number of workers who will be reallocated to new or temporary jobs.
 reserve: int = 0  # This is the number of workers who will not be reallocated to new or temporary jobs due to risk factor or lack of demand.
 # TODO
@@ -24,3 +33,6 @@ reserve = unemployed * (1 - employmentrate)
 
 print(
     'Base unemployed: ', unemployed, '\n Reemployed: ', employed, '\n Reserve: ', reserve, '\n Employment rate: ', employmentrate)
+
+# TODO
+# Maybe we should separate unemployed people by sector/profession and try to reallocate based on skillsets as pitched.
