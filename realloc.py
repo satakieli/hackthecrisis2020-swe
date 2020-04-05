@@ -7,32 +7,61 @@ import xlrd
 # Authors: Harsha Cheemakurthy, Anna Robbins
 # Hack the Crisis Sweden 2020
 
-# test variable declaration; will be changed later to follow a statistical model
+# open spreadsheets to extract data
+pd1 = pandas.read_excel('Sample_unemployment_Stockholm_30.xlsx')
+pd2 = pandas.read_excel('Sample_job_openings_Stockholm.xlsx')
 
-wb1 = xlrd.open_workbook("C:/users/arobb/PycharmProjects/untitled/Sample_unemployment_Stockholm_30.xlsx")
-sheet1 = wb1.sheet_by_index(0)
+# TEST
+# print(pd1)
+# print(pd2)
 
-wb2 = xlrd.open_workbook("C:/users/arobb/PycharmProjects/untitled/Sample_job_openings_Stockholm.xlsx")
-sheet2 = wb2.sheet_by_index(0)
+# UNEMPLOYMENT
+unemployed = pd1.iloc[0:7, 2]
+reserve = []                # number that remains unemployed after reallocation, due to health risk or skill mismatch
+length = len(unemployed)
+i = 0
 
+# Assume that 70-90% of each occupation in the currently unemployed workforce with a desirable skillset can be
+# reemployed immediately in a current opening.
+# For occupations without desirable skillsets, assume that 30-50% can be reemployed immediately in a current opening.
+for i in range(0,length):
+    if i!=3 and i!=4:
+        reserve.append(int(unemployed[i]*(100 - random.randrange(70, 90))/100))
+    else:
+        reserve.append(int(unemployed[i]*(100 - random.randrange(30,50))/100))
+# TEST
+# print(reserve)
 
-unemployed = random.randrange(300000,
-                              1000000)  # This is a number representing people who are currently unemployed.
-employed: int = 0  # This is the number of workers who will be reallocated to new or temporary jobs.
-reserve: int = 0  # This is the number of workers who will not be reallocated to new or temporary jobs due to risk factor or lack of demand.
-# TODO
-jobopenings = random.randrange(100000,
-                               900000)  # This is a random number between 100k-900, representing available job openings.
-stillopen = random.randrange(0,200000)
-employmentrate = (jobopenings-stillopen)/unemployed # This represents the percentage (between 0 and 1) expected reemployment; will be randomly generated later.
-# Note that it is not realistic to have 0 job openings in the end, i.e., not all available positions will be filled.
-# This has been modelled by subtracting a randomly generated number between 0-200k from job openings.
+# TOTAL EMPLOYMENT
+employed = pd1.iloc[0:7, 1]  # total employed after reallocation, incl. original employment and reallocated employment
+reallocate = []              # number in each occupation A-F and Other to be reallocated to jobs W-Z
+i = 0
+for i in range(0,length):
+    temp = unemployed[i] - reserve[i]
+    reallocate.append(temp)
+    employed[i] = int(employed[i] + temp)
+# TEST
+# print(employed)
+# print(reallocate)
 
-employed = jobopenings-stillopen
-reserve = unemployed * (1 - employmentrate)
+# REALLOCATION
+    # Assume skillsets overlap between occupations:
+    # A and W;
+    # B, C and X;
+    # F and Y, Z
+job_openings = pd2.iloc[0:4,1]
+reallocated_results = job_openings      # number of workers in occupations W-Z after reallocation
+length2 = len(job_openings)
 
-print(
-    'Base unemployed: ', unemployed, '\n Reemployed: ', employed, '\n Reserve: ', reserve, '\n Employment rate: ', employmentrate)
+reallocated_results[0] = reallocated_results[0] + reallocate[0]                     # add reallocated employees from A to W
+reallocated_results[1] = reallocated_results[1] + reallocate[1] + reallocate[2]     # add reallocated employees from B,C to X
 
-# TODO
-# Maybe we should separate unemployed people by sector/profession and try to reallocate based on skillsets as pitched.
+split_yz = random.randrange(0,100)          # random percentage to determine how occupation F is split between Y and Z
+realloc_y = reallocate[5]*split_yz/100
+realloc_z = reallocate[5]*(100-split_yz)/100
+
+reallocated_results[2] = reallocated_results[2] + realloc_y
+reallocated_results[3] = reallocated_results[2] + realloc_z
+
+# TEST
+print(reallocated_results)
